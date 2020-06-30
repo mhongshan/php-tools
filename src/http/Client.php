@@ -326,7 +326,7 @@ class Client
     protected function getRequestOptions()
     {
         $options = $this->options;
-        if (!$this->header) {
+        if ($this->header) {
             $options['headers'] = array_merge($this->options['headers'] ?? [], $this->header);
         }
         if ($this->cookie) {
