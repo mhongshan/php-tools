@@ -191,4 +191,27 @@ class Tree
 
         return $this;
     }
+    
+    /**
+     * filterTree
+     *
+     * @param  mixed $tree
+     * @param  callable $callback
+     * @return array
+     */
+    public function filterTree($tree, $callback)
+    {
+        if (!is_callable($callback)) {
+            return $tree;
+        }
+        $childrenField = $this->options['children'];
+        foreach($tree as $key => &$datum){
+            $datum = call_user_func_array($callback, [$datum]);
+            if (isset($datum[$childrenField])) {
+                $datum[$childrenField] = $this->filterTree($datum[$childrenField], $callback);
+            }
+        }
+        unset($datum);
+        return $tree;
+    }
 }

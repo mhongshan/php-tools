@@ -104,4 +104,31 @@ class TreeTest extends TestCase
         $flat = $tree->flatTree($result);
         $this->assertEquals(3, count($flat));
     }
+
+    public function testTreeFilter()
+    {
+        $data = [
+            ['id'=>1, 'pid'=>0, 'name'=>'a'], 
+            ['id'=>2, 'pid'=>0, 'name'=>'b'],
+            ['id'=>3, 'pid'=>1, 'name'=>'c'],
+            ['id'=>4, 'pid'=>3, 'name'=>'d'],
+        ];
+        $tree = new Tree($data, ['has'=>'']);
+        $treeData = $tree->subTree();
+        $treeData = $tree->filterTree($treeData, function($item){
+            if (empty($item['children'])) {
+                unset($item['children']);
+            }
+            return $item;
+        });
+        $result = [
+            ['id'=>1, 'pid'=>0, 'name'=>'a', 'children'=>[
+                ['id'=>3, 'pid'=>1, 'name'=>'c', 'children'=>[
+                    ['id'=>4, 'pid'=>3, 'name'=>'d']
+                ]]
+            ]],
+            ['id'=>2, 'pid'=>0, 'name'=>'b']
+        ];
+        $this->assertEquals($result, $treeData);
+    }
 }
